@@ -35,6 +35,7 @@ class ServerThread(Thread):
         img_byte_arr = img_byte_arr.getvalue()
         with self.conn:
             self.conn.send(img_byte_arr)
+        print(f"Sent an image to {self.addr}")
 
 
 def main():
