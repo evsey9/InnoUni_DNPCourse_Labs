@@ -4,11 +4,15 @@ import time
 
 from PIL import Image
 
-import threading
+# Import multithreading/queue
 from threading import Thread
 import queue
 from queue import Queue
 
+# Import multiprocessing
+from multiprocessing import Pool
+
+# Define constants
 SERVER_URL = '127.0.0.1:1234'
 FILE_NAME = 'EvseyAntonovich.gif'
 CLIENT_BUFFER = 1024
@@ -62,13 +66,17 @@ def download_frames():
     return time.time() - t0
 
 
+def open_frame(frame_id):
+    return Image.open(f"frames/{frame_id}.png").convert("RGBA")
+
+
 def create_gif():
     t0 = time.time()
-    frames = []
-    for frame_id in range(FRAME_COUNT):
-        frames.append(Image.open(f"frames/{frame_id}.png").convert("RGBA"))
-    frames[0].save(FILE_NAME, format="GIF",
-                   append_images=frames[1:], save_all=True, duration=500, loop=0)
+    frames_in = [frame_id for frame_id in range(FRAME_COUNT)]
+    with Pool() as p:
+        frames_out = p.map(open_frame, frames_in)
+    frames_out[0].save(FILE_NAME, format="GIF",
+                   append_images=frames_out[1:], save_all=True, duration=500, loop=0)
     return time.time() - t0
 
 
@@ -84,3 +92,8 @@ if __name__ == '__main__':
 # after multithreading:
 # Frames download time: 1.4830012321472168
 # GIF creation time: 13.848997592926025
+
+
+# after multiprocessing:
+# Frames download time: 1.4189999103546143
+# GIF creation time: 5.190000534057617
