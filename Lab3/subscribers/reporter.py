@@ -29,6 +29,7 @@ def callback(channel, method, properties, body):
                 print(f'{time}: ', end='')
                 if len(json_objects) == 0:
                     print("No sensor readings found!")
+                    return
             if user_string == "current":
                 print(f"Latest CO2 level is {json_objects[-1]['value']}")
             elif user_string == "average":
