@@ -12,13 +12,13 @@ class Query:
 
 
 def main():
-    queries = [
+    queries_to_send = [
         Query(type='A', key='example.com'),
         Query(type='PTR', key='1.2.3.4'),
         Query(type='CNAME', key='moodle.com')
     ]
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    for query in queries:
+    for query in queries_to_send:
         print(f"Client: Sending query for {query.key}")
         sock.sendto(json.dumps(query.__dict__).encode(), ('localhost', PORT))
         data, addr = sock.recvfrom(1024)
